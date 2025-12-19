@@ -65,7 +65,7 @@ const Sidebar = ({
         isCollapsed ? "w-16 md:w-24" : "w-16 md:w-60"
       )}
     >
-      <div className="flex h-14 items-center border-b px-4 mb-4">
+      <div className="flex h-14 items-center border-b px-4 py-9 mb-4">
         <Link to="/dashboard" className="flex items-center">
           {isCollapsed ? (
             <LogoIcon className="size-7" />

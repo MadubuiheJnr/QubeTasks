@@ -21,3 +21,41 @@ export const useGetWorkspaceQuery = (workspaceId: string) => {
     queryFn: async () => getData(`/workspaces/${workspaceId}/projects`),
   });
 };
+
+export const useGetWorkspaceStatsQuery = (workspaceId: string) => {
+  return useQuery({
+    queryKey: ["workspace", workspaceId, "stats"],
+    queryFn: async () => getData(`/workspaces/${workspaceId}/stats`),
+    enabled: Boolean(workspaceId),
+  });
+};
+
+export const useGetWorkspaceDetailsQuery = (workspaceId: string) => {
+  return useQuery({
+    queryKey: ["workspace", workspaceId, "details"],
+    queryFn: async () => getData(`/workspaces/${workspaceId}`),
+  });
+};
+
+export const useInviteMemberMutation = () => {
+  return useMutation({
+    mutationFn: (data: { email: string; role: string; workspaceId: string }) =>
+      postData(`/workspaces/${data.workspaceId}/invite-member`, data),
+  });
+};
+
+export const useAcceptInviteByTokenMutation = () => {
+  return useMutation({
+    mutationFn: (token: string) =>
+      postData(`/workspaces/accept-invite-token`, {
+        token,
+      }),
+  });
+};
+
+export const useAcceptGenerateInviteMutation = () => {
+  return useMutation({
+    mutationFn: (workspaceId: string) =>
+      postData(`/workspaces/${workspaceId}/accept-general-invite`, {}),
+  });
+};

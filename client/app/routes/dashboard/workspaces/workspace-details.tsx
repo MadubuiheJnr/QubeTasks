@@ -1,5 +1,6 @@
 import Loader from "@/components/loader";
 import { CreateProjectDialog } from "@/components/project/create-project-dialog";
+import { InviteMemberDialog } from "@/components/workspace/invite-member-dialog";
 import { ProjectList } from "@/components/workspace/project-list";
 import { WorkspaceHeader } from "@/components/workspace/workspace-header";
 import { useGetWorkspaceQuery } from "@/hooks/use-workspace";
@@ -12,7 +13,7 @@ const WorkspaceDetails = () => {
     workspaceId: string;
   };
   const [isCreateProject, setIsCreateProject] = useState<boolean>(false);
-  const [inviteMember, setInviteMember] = useState<boolean>(false);
+  const [isInviteMember, setIsInviteMember] = useState(false);
 
   const { data, isLoading } = useGetWorkspaceQuery(workspaceId) as {
     data: {
@@ -25,12 +26,12 @@ const WorkspaceDetails = () => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="space-y-8 py-5 lg:py-0">
+    <div className="space-y-8 py-5">
       <WorkspaceHeader
         workspace={data.workspace}
         members={data.workspace.members}
         onCreateProject={() => setIsCreateProject(true)}
-        onInviteMember={() => setInviteMember(true)}
+        onInviteMember={() => setIsInviteMember(true)}
       />
 
       <ProjectList
@@ -44,6 +45,12 @@ const WorkspaceDetails = () => {
         onOpenChange={setIsCreateProject}
         workspaceId={workspaceId}
         workspaceMembers={data.workspace.members}
+      />
+
+      <InviteMemberDialog
+        isOpen={isInviteMember}
+        onOpenChange={setIsInviteMember}
+        workspaceId={workspaceId}
       />
     </div>
   );

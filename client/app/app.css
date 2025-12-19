@@ -135,3 +135,29 @@ body {
     font-family: "Montserrat", sans-serif;
   }
 }
+.font-italic {
+  font-style: italic;
+}
+
+/* Target the specific container */
+.no-scrollbar {
+  /* IE and Edge */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+/* Chrome, Safari, and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* @layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+} */

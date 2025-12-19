@@ -17,15 +17,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      window.dispatchEvent(new Event("force-logout"));
-    }
-    return Promise.reject(error);
-  }
-);
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response && error.response.status === 401) {
+//       window.dispatchEvent(new Event("force-logout"));
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 const postData = async <T>(endpoint: string, data: unknown): Promise<T> => {
   const response = await api.post(endpoint, data);

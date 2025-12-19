@@ -33,10 +33,10 @@ const DashboardLayout = () => {
     return <Loader />;
   }
   if (!isAuthenticated) {
-    return <Navigate to="/sign-in" />;
+    return <Navigate to="/" />;
   }
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex h-screen w-full ">
       <Sidebar currentWorkspace={currentWorkspace} />
       <div className="flex flex-1 flex-col h-full">
         <Header
@@ -44,7 +44,7 @@ const DashboardLayout = () => {
           selectedWorkspace={currentWorkspace}
           onCreateWorkspace={() => setIsCreatingWorkspace(true)}
         />
-        <main className="flex-1 overflow-y-auto w-full h-full">
+        <main className="flex-1 overflow-y-auto w-full h-full no-scrollbar">
           <div className="mx-auto container px-2 sm:px-6 lg:px-8 py-0 md:py-8 w-full h-full">
             <Outlet />
           </div>

@@ -25,6 +25,15 @@ const emailSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
+const inviteMemberSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  role: z.enum(["admin", "member", "viewer"]),
+});
+
+const tokenSchema = z.object({
+  token: z.string().min(1, "Token is required"),
+});
+
 const workspaceSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
@@ -54,6 +63,15 @@ const projectSchema = z.object({
     .optional(),
 });
 
+const taskSchema = z.object({
+  title: z.string().min(1, "Task title is required"),
+  description: z.string().optional(),
+  status: z.enum(["To Do", "In Progress", "Done"]),
+  priority: z.enum(["Low", "Medium", "High"]),
+  dueDate: z.string().min(1, "Due date is required"),
+  assignees: z.array(z.string()).min(1, "At least one assignee is required"),
+});
+
 export {
   registerSchema,
   loginSchema,
@@ -62,4 +80,7 @@ export {
   emailSchema,
   workspaceSchema,
   projectSchema,
+  taskSchema,
+  inviteMemberSchema,
+  tokenSchema,
 };

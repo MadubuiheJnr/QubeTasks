@@ -25,7 +25,7 @@ export const ProjectCard = ({
   workspaceId,
 }: ProjectCardProps) => {
   return (
-    <Link to={`/workspace/${workspaceId}/projects/${project._id}`}>
+    <Link to={`/workspaces/${workspaceId}/projects/${project._id}`}>
       <Card className=" transition-all duration-300 hover:shadow-md hover:translate-y-1">
         <CardHeader>
           <div className="flex flex-col lg:flex-row justify-center lg:items-center gap-2 lg:gap-5">

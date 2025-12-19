@@ -79,6 +79,8 @@ const loginUser = async (req, res) => {
         userId: user._id,
       });
 
+      let verificationToken;
+
       if (existingVerification && existingVerification.expiresAt > new Date()) {
         return res
           .status(400)
@@ -86,7 +88,7 @@ const loginUser = async (req, res) => {
       } else {
         await VerificationModel.findByIdAndDelete(existingVerification._id);
 
-        const verificationToken = jwt.sign(
+        verificationToken = jwt.sign(
           { userId: user._id, purpose: "email-verification" },
           process.env.JWT_SECRET,
           { expiresIn: "1h" }
@@ -131,12 +133,7 @@ const loginUser = async (req, res) => {
     user.lastLogin = new Date();
     await user.save();
 
-    const userData = user.toObject();
-    delete userData.password;
-
-    res
-      .status(200)
-      .json({ message: "Login successful", token, user: userData });
+    res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });

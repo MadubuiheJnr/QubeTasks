@@ -57,3 +57,38 @@ export const projectSchema = z.object({
     .optional(),
   tags: z.string().optional(),
 });
+
+export const createTaskSchema = z.object({
+  title: z.string().min(1, "Task title is required"),
+  description: z.string().optional(),
+  status: z.enum(["To Do", "In Progress", "Done"]),
+  priority: z.enum(["Low", "Medium", "High"]),
+  dueDate: z.string().min(1, "Due date is required"),
+  assignees: z.array(z.string()).min(1, "At least one assignee is required"),
+});
+
+export const inviteMemberSchema = z.object({
+  email: z.string().email(),
+  role: z.enum(["admin", "member", "viewer"]),
+});
+
+// For User Profile
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(1, { message: "Current password is required" }),
+    newPassword: z.string().min(8, { message: "New password is required" }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: "Confirm password is required" }),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export const profileSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  profilePicture: z.string().optional(),
+});
