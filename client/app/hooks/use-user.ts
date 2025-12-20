@@ -1,8 +1,6 @@
+import type { ProfileFormData } from "@/components/user-profile/mobile-profile/manage-profile-drawer";
+import type { ChangePasswordFormData } from "@/components/user-profile/mobile-profile/password-and-security-drawer/password";
 import { getData, updateData } from "@/lib/fetch-utils";
-import type {
-  ChangePasswordFormData,
-  ProfileFormData,
-} from "@/routes/user/profile";
 import { useMutation, useQuery, type QueryKey } from "@tanstack/react-query";
 
 const queryKey: QueryKey = ["user"];

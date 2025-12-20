@@ -18,10 +18,14 @@ import { useAuth } from "@/provider/auth-context";
 import { ProfileCard } from "./profile-card";
 import { useState } from "react";
 import { AlertDialog } from "@/components/alert-dialog";
+import { ManageProfileDrawer } from "./manage-profile-drawer";
+import { PasswordAndSecurityDrawer } from "./password-and-security-drawer";
 
 export const MobileProfile = ({ user }: { user: User }) => {
   const { logout } = useAuth();
   const [isAlert, setIsAlert] = useState(false);
+  const [isManageProfile, setIsManageProfile] = useState(false);
+  const [isPasswordSecurity, setIsPasswordSecurity] = useState(false);
   return (
     <>
       <div className="space-y-10 py-3">
@@ -32,14 +36,20 @@ export const MobileProfile = ({ user }: { user: User }) => {
           <p className="font-medium text-base text-muted-foreground">Account</p>
           <Card className="mt-2">
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between cursor-pointer">
+              <div
+                onClick={() => setIsManageProfile(true)}
+                className="flex items-center justify-between cursor-pointer"
+              >
                 <p className="flex items-center gap-3 ">
                   <UserCircle className="size-5 " />
                   <span className="text-base ">Manage Profile</span>
                 </p>
                 <ChevronRight className="size-5" />
               </div>
-              <div className="flex items-center justify-between cursor-pointer">
+              <div
+                onClick={() => setIsPasswordSecurity(true)}
+                className="flex items-center justify-between cursor-pointer"
+              >
                 <p className="flex items-center gap-3">
                   <LockKeyhole className="size-5" />
                   <span className="text-base">Password & Security</span>
@@ -125,6 +135,17 @@ export const MobileProfile = ({ user }: { user: User }) => {
         onAlertChange={setIsAlert}
         alertActionText="Log out"
         onAlertAction={logout}
+      />
+
+      <ManageProfileDrawer
+        user={user}
+        isOpen={isManageProfile}
+        onOpenChange={setIsManageProfile}
+      />
+      <PasswordAndSecurityDrawer
+        user={user}
+        isOpen={isPasswordSecurity}
+        onOpenChange={setIsPasswordSecurity}
       />
     </>
   );
