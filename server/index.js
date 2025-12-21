@@ -19,7 +19,7 @@ app.use(
 
 app.use(morgan("dev"));
 
-mongoose
+await mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("DB connected successfully"))
   .catch((err) => console.log("Failed to connect to DB:", err));
