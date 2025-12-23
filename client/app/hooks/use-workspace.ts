@@ -30,6 +30,14 @@ export const useGetWorkspaceStatsQuery = (workspaceId: string) => {
   });
 };
 
+export const useGetWorkspaceArchive = (workspaceId: string) => {
+  return useQuery({
+    queryKey: ["workspace", workspaceId, "archive"],
+    queryFn: async () => getData(`/workspaces/${workspaceId}/archive`),
+    enabled: Boolean(workspaceId),
+  });
+};
+
 export const useGetWorkspaceDetailsQuery = (workspaceId: string) => {
   return useQuery({
     queryKey: ["workspace", workspaceId, "details"],

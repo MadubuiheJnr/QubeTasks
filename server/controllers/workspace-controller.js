@@ -1,6 +1,7 @@
 import recordActivity from "../libs/record-activity.js";
 import { sendEmail } from "../libs/send-email.js";
 import ProjectModel from "../models/project-model.js";
+import TaskModel from "../models/task-model.js";
 import UserModel from "../models/user-model.js";
 import WorkspaceInviteModel from "../models/workspace-invite.js";
 import WorkspaceModel from "../models/workspace-model.js";
@@ -534,6 +535,56 @@ const acceptInviteByToken = async (req, res) => {
   }
 };
 
+const getWorkspaceArchive = async (req, res) => {
+  try {
+    const { workspaceId } = req.params;
+
+    const workspace = await WorkspaceModel.findById(workspaceId);
+
+    if (!workspace) {
+      return res.status(404).json({
+        message: "Workspace not found",
+      });
+    }
+
+    const isMember = workspace.members.some(
+      (member) => member.user.toString() === req.user._id.toString()
+    );
+
+    if (!isMember) {
+      return res.status(403).json({
+        message: "You are not a member of this workspace",
+      });
+    }
+
+    const [totalArchivedProjects, archivedProjects] = await Promise.all([
+      ProjectModel.countDocuments({ workspace: workspaceId, isArchived: true }),
+      ProjectModel.find({ workspace: workspaceId, isArchived: true })
+        .populate("tasks", "title status dueDate project updatedAt priority")
+        .sort({ createdAt: -1 }),
+    ]);
+
+    const [totalArchivedTasks, archivedTasks] = await Promise.all([
+      TaskModel.countDocuments({ workspace: workspaceId, isArchived: true }),
+      TaskModel.find({ workspace: workspaceId, isArchived: true })
+        .populate("project", "title")
+        .sort({ createdAt: -1 }),
+    ]);
+
+    res.status(200).json({
+      archivedProjects,
+      totalArchivedProjects,
+      archivedTasks,
+      totalArchivedTasks,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 export {
   createWorkSpace,
   getWorkSpaces,
@@ -543,4 +594,5 @@ export {
   inviteUserToWorkspace,
   acceptGeneralInvite,
   acceptInviteByToken,
+  getWorkspaceArchive,
 };

@@ -45,6 +45,7 @@ const createTask = async (req, res) => {
       dueDate,
       assignees,
       project: projectId,
+      workspace: project.workspace,
       createdBy: req.user._id,
     });
 

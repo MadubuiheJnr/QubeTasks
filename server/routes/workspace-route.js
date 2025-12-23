@@ -11,6 +11,7 @@ import {
   acceptGeneralInvite,
   acceptInviteByToken,
   createWorkSpace,
+  getWorkspaceArchive,
   getWorkSpaceDetails,
   getWorkSpaces,
   getWorkSpacesProjects,
@@ -51,8 +52,35 @@ router.post(
 );
 
 router.get("/", authMiddleware, getWorkSpaces);
-router.get("/:workspaceId", authMiddleware, getWorkSpaceDetails);
-router.get("/:workspaceId/projects", authMiddleware, getWorkSpacesProjects);
-router.get("/:workspaceId/stats", authMiddleware, getWorkSpaceStats);
+router.get(
+  "/:workspaceId",
+  authMiddleware,
+  validateRequest({ params: z.object({ workspaceId: z.string() }) }),
+  getWorkSpaceDetails
+);
+router.get(
+  "/:workspaceId/projects",
+  authMiddleware,
+  validateRequest({ params: z.object({ workspaceId: z.string() }) }),
+  getWorkSpacesProjects
+);
+router.get(
+  "/:workspaceId/stats",
+  authMiddleware,
+  validateRequest({ params: z.object({ workspaceId: z.string() }) }),
+  getWorkSpaceStats
+);
+router.get(
+  "/:workspaceId/projects",
+  authMiddleware,
+  validateRequest({ params: z.object({ workspaceId: z.string() }) }),
+  getWorkSpacesProjects
+);
+router.get(
+  "/:workspaceId/archive",
+  authMiddleware,
+  validateRequest({ params: z.object({ workspaceId: z.string() }) }),
+  getWorkspaceArchive
+);
 
 export default router;

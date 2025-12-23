@@ -9,6 +9,11 @@ const taskSchema = new Schema(
       ref: "Project",
       required: true,
     },
+    workspace: {
+      type: Schema.Types.ObjectId,
+      ref: "Workspace",
+      required: true,
+    },
     status: {
       type: String,
       enum: ["To Do", "In Progress", "Review", "Done"],

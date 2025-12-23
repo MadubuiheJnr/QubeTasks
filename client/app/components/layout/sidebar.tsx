@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/provider/auth-context";
 import type { WorkSpace } from "@/types";
 import {
-  CheckCircle2,
+  Archive,
   LayoutDashboard,
   ListCheck,
   LogOut,
@@ -48,9 +48,9 @@ const Sidebar = ({
       icon: Users,
     },
     {
-      title: "Archived",
-      href: "/archived",
-      icon: CheckCircle2,
+      title: "Archive",
+      href: "/archive",
+      icon: Archive,
     },
     {
       title: "Settings",
