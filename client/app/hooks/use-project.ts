@@ -1,5 +1,5 @@
 import type { CreateProjectFormData } from "@/components/project/create-project-dialog";
-import { getData, postData } from "@/lib/fetch-utils";
+import { getData, postData, updateData } from "@/lib/fetch-utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateProject = () => {
@@ -16,6 +16,22 @@ export const useCreateProject = () => {
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({
         queryKey: ["workspace", data.workspace],
+      });
+    },
+  });
+};
+
+export const useToggleProjectArchive = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { projectId: string }) =>
+      updateData(`/projects/${data.projectId}/archive`),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({
+        queryKey: ["workspace", data.workspace, "archive"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["project", data.project],
       });
     },
   });

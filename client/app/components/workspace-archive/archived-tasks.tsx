@@ -6,39 +6,53 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import {
-  ArchiveRestore,
-  ArrowUpRight,
-  MoreHorizontal,
-  Trash,
-} from "lucide-react";
+import { Divide, Eye, MoreHorizontal, Recycle, Trash } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { format } from "date-fns";
-import { Link } from "react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
+import { useArchivedTaskMutation } from "@/hooks/use-task";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-export const ArchivedTasks = ({ task }: { task: Task }) => {
+export const ArchivedTasks = ({
+  task,
+  workspaceId,
+}: {
+  task: Task;
+  workspaceId: string;
+}) => {
+  const navigate = useNavigate();
+  const { mutate: archiveTask, isPending: isArchiving } =
+    useArchivedTaskMutation();
+
+  const handleRestoreArchivedTask = () => {
+    archiveTask(
+      { taskId: task._id },
+      {
+        onSuccess: () => {
+          toast.success("Task restored");
+        },
+        onError: (error: any) => {
+          const errMsg =
+            error?.response?.data?.message || "Error restoring task";
+          toast.error(errMsg);
+        },
+      }
+    );
+  };
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <Link
-            to={`/workspaces/${task.project.workspace}/projects/${task.project._id}/tasks/${task._id}`}
-            className="font-medium hover:text-primary hover:underline transition-colors"
-          >
-            {task.title}
-            <ArrowUpRight className="size-5 inline ml-1" />
-          </Link>
-        </CardTitle>
-        <CardAction>
+        <CardTitle className="flex items-center justify-between">
+          <p>{task.title}</p>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant={"outline"} size={"icon"}>
@@ -46,52 +60,68 @@ export const ArchivedTasks = ({ task }: { task: Task }) => {
               </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent className="mr-8 md:mr-26">
+            <DropdownMenuContent className="mr-8 md:mr-26 ">
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <ArrowUpRight /> Task details
+                <DropdownMenuItem
+                  onClick={() =>
+                    navigate(
+                      `/workspaces/${workspaceId}/projects/${task.project._id}/tasks/${task._id}`
+                    )
+                  }
+                >
+                  <Eye /> View task
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <ArrowUpRight /> Project details
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <ArchiveRestore /> Restore
+                <DropdownMenuItem onClick={handleRestoreArchivedTask}>
+                  <Recycle /> Restore
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-        </CardAction>
+        </CardTitle>
         <CardDescription className="space-y-1 mt-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between">
             {task.status && (
-              <Badge
-                variant={task.status === "Done" ? "default" : "outline"}
-                className="px-3"
-              >
-                {task.status}
-              </Badge>
+              <p>
+                <span className="font-medium">Status:</span> {task.status}
+              </p>
             )}
             {task.priority && (
-              <Badge
-                variant={task.priority === "High" ? "destructive" : "secondary"}
-                className="px-3"
-              >
-                {task.priority}
-              </Badge>
+              <p>
+                <span className="font-medium">Priority:</span> {task.priority}
+              </p>
             )}
           </div>
-          <div className="text-sm text-muted-foreground space-y-1 mt-2">
-            {task.dueDate && <div>Due: {format(task.dueDate, "PPPP")}</div>}
-
+          {task.project.title && (
             <div>
-              Project: <span className="font-medium">{task.project.title}</span>
+              <span className="font-medium"> Project:</span>{" "}
+              {task.project.title}
             </div>
+          )}
+          <p>
+            <span className="font-medium">Subtasks:</span>{" "}
+            {task.subtasks?.length}
+          </p>
 
-            <div>Modified on: {format(task.updatedAt, "PPPP")}</div>
-          </div>
+          {task.assignees?.length > 0 && (
+            <div className="flex items-center -space-x-3 mt-3">
+              {task.assignees.slice(0, 5).map((assignee) => (
+                <Avatar className="size-8">
+                  <AvatarImage
+                    src={assignee?.profilePicture}
+                    alt={assignee?.name}
+                  />
+                  <AvatarFallback className="text-sm">
+                    {assignee?.name.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              ))}
+              {task.assignees.length > 5 && (
+                <span className="text-sm font-medium ml-2">
+                  +{task.assignees.length - 5} more
+                </span>
+              )}
+            </div>
+          )}
         </CardDescription>
       </CardHeader>
     </Card>

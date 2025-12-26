@@ -1,8 +1,23 @@
 import type { User, WorkSpace } from "@/types";
 import WorkspaceAvatar from "./workspace-avatar";
 import { Button } from "../ui/button";
-import { Plus, UserPlus2 } from "lucide-react";
+import {
+  ArchiveIcon,
+  MoreHorizontal,
+  Plus,
+  Trash2,
+  UserPlus2,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 interface WorkspaceHeaderProps {
   workspace: WorkSpace;
@@ -27,7 +42,7 @@ export const WorkspaceHeader = ({
   return (
     <div className="space-y-8">
       <div className="space-y-3">
-        <div className="flex flex-col-reverse gap-3 md:flex-row md:justify-between md:items-center">
+        <div className="flex gap-3 justify-between items-center">
           <div className="flex md:items-center gap-3">
             {workspace.color && (
               <WorkspaceAvatar color={workspace.color} name={workspace.name} />
@@ -37,15 +52,57 @@ export const WorkspaceHeader = ({
             </h2>
           </div>
 
-          <div className="flex items-center gap-3 justify-between md:justify-start mb-4 md:mb-0">
-            <Button variant="outline" onClick={onInviteMember}>
-              <UserPlus2 className="size-4 mr-2" />
-              Invite
-            </Button>
-            <Button onClick={onCreateProject}>
-              <Plus className="size-4" />
-              New Project
-            </Button>
+          {/* Workspace Actions */}
+          <div className="flex items-center gap-3">
+            <div className="items-center gap-3 justify-between md:justify-start mb-4 md:mb-0 hidden md:flex">
+              <Button variant="outline" onClick={onInviteMember}>
+                <UserPlus2 className="size-4 mr-2" />
+                Invite
+              </Button>
+              <Button onClick={onCreateProject}>
+                <Plus className="size-4" />
+                New Project
+              </Button>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger className="cursor-pointer">
+                <MoreHorizontal className="size-5 mr-2 md:hidden" />
+                <Button
+                  variant={"outline"}
+                  size={"icon"}
+                  className="hidden md:hidden"
+                >
+                  <MoreHorizontal className="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent className="mr-3">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    className="cursor-pointer md:hidden"
+                    onClick={onCreateProject}
+                  >
+                    <Plus className="size-4" />
+                    New Project
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer md:hidden"
+                    onClick={onInviteMember}
+                  >
+                    <UserPlus2 className="size-4" />
+                    Invite Member
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Trash2 className="size-4" />
+                    Delete Workspace
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -59,7 +116,7 @@ export const WorkspaceHeader = ({
       {members.length > 0 && (
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Members</span>
-          <div className="flex space-x-2">
+          <div className="flex items-center -space-x-2">
             {members.map((member) => (
               <Avatar
                 key={member._id}

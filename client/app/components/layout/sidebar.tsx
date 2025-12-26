@@ -3,8 +3,9 @@ import { useAuth } from "@/provider/auth-context";
 import type { WorkSpace } from "@/types";
 import {
   Archive,
+  CheckSquare,
+  Layers,
   LayoutDashboard,
-  ListCheck,
   LogOut,
   Settings,
   SidebarClose,
@@ -35,12 +36,12 @@ const Sidebar = ({
     {
       title: "Workspaces",
       href: "/workspaces",
-      icon: Users,
+      icon: Layers,
     },
     {
       title: "My Tasks",
       href: "/my-tasks",
-      icon: ListCheck,
+      icon: CheckSquare,
     },
     {
       title: "Members",

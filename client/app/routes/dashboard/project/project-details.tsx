@@ -4,14 +4,25 @@ import { CreateTaskDialog } from "@/components/task/create-task-dialog";
 import { TaskColumn } from "@/components/task/task-column";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useProjectQuery } from "@/hooks/use-project";
+import { useProjectQuery, useToggleProjectArchive } from "@/hooks/use-project";
 import { getProjectProgress } from "@/lib";
 import type { Project, Task, TaskStatus } from "@/types";
+import { Archive, MoreVertical, PenBox, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router";
+import { toast } from "sonner";
 
 const ProjectDetails = () => {
   const { projectId, workspaceId } = useParams<{
@@ -30,6 +41,7 @@ const ProjectDetails = () => {
     };
     isLoading: boolean;
   };
+  const { mutate: toggleProjectArchive } = useToggleProjectArchive();
 
   if (isLoading) return <Loader />;
 
@@ -42,11 +54,75 @@ const ProjectDetails = () => {
     );
   };
 
+  const handleToggleProjectArchive = () => {
+    toggleProjectArchive(
+      { projectId: project._id },
+      {
+        onSuccess: () => {
+          toast.success("Project achieved");
+          navigate(-1);
+        },
+        onError: (error: any) => {
+          const errMsg =
+            error?.response?.data?.message || "Error archiving project";
+          toast.error(errMsg);
+        },
+      }
+    );
+  };
+
   return (
     <div className="space-y-8 py-5">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-2">
-          <BackButton />
+          <div className="flex items-center justify-between">
+            <BackButton />
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className={`${project.isArchived ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+              >
+                <Button
+                  variant={"outline"}
+                  size={"icon"}
+                  disabled={project.isArchived}
+                >
+                  <MoreVertical className="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent className="mr-3">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={handleToggleProjectArchive}
+                    className="cursor-pointer"
+                  >
+                    {project.isArchived ? (
+                      <>
+                        <Archive className="size-4" />
+                        Unarchive Project
+                      </>
+                    ) : (
+                      <>
+                        <Archive className="size-4" />
+                        Archive Project
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <PenBox className="size-4" />
+                    Edit Members
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Trash2 className="size-4" />
+                    Update Status
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <div className="flex items-center gap-3">
             <h1 className="text-xl md:text-2xl font-bold">{project.title}</h1>
           </div>
@@ -69,7 +145,13 @@ const ProjectDetails = () => {
             </span>
           </div>
 
-          <Button onClick={() => setIsCreateTask(true)}>Add Task</Button>
+          <Button
+            onClick={() => setIsCreateTask(true)}
+            disabled={project.isArchived}
+            className={`${project.isArchived ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          >
+            Add Task
+          </Button>
         </div>
       </div>
 

@@ -13,6 +13,15 @@ import { Watchers } from "@/components/task/watchers";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   useArchivedTaskMutation,
   useTaskByIdQuery,
   useWatchTaskMutation,
@@ -26,6 +35,8 @@ import {
   ArchiveRestore,
   Eye,
   EyeOff,
+  MoreVertical,
+  Trash2,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
@@ -93,6 +104,7 @@ const TaskDetails = () => {
       {
         onSuccess: () => {
           toast.success("Task achieved");
+          navigate(-1);
         },
         onError: () => {
           toast.error("Failed to achieve task");
@@ -103,67 +115,122 @@ const TaskDetails = () => {
 
   return (
     <div className="container mx-auto p-0 py-4 md:px-4">
-      <div className="flex flex-col md:flex-row items-center justify-between mb-6">
-        <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
-          <BackButton />
+      <div className="flex items-center justify-between">
+        <BackButton />
 
-          <h1 className="text-xl md:text-2xl font-bold">{task.title}</h1>
+        <div>
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant={"outline"} size={"icon"}>
+                  <MoreVertical className="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
 
-          {task.isArchived && (
-            <Badge className=" w-fit px-4" variant={"outline"}>
-              <ArchiveIcon className="inline size-5" /> Archived
-            </Badge>
-          )}
-        </div>
+              <DropdownMenuContent className="mr-2">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
 
-        <div className="flex space-x-2 mt-4 md:mt-0">
-          <Button
-            variant={"outline"}
-            size={"sm"}
-            className=" w-fit"
-            onClick={handleWatchTask}
-            disabled={isWatching}
-          >
-            {isUserWatching ? (
-              <>
-                <EyeOff className="inline size-4" />
-                <span>Stop Watching</span>
-              </>
-            ) : (
-              <>
-                <Eye className="inline size-4" />
-                <span>Watch</span>
-              </>
-            )}
-          </Button>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    disabled={isWatching || task.isArchived}
+                    onClick={handleWatchTask}
+                  >
+                    {isUserWatching ? (
+                      <>
+                        <EyeOff className="inline size-4" />
+                        <span>Stop Watching</span>
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="inline size-4" />
+                        <span>Watch</span>
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleArchiveTask}
+                    disabled={isArchiving || task.isArchived}
+                  >
+                    {task.isArchived ? (
+                      <>
+                        <ArchiveRestore className="inline" />
+                        Unarchive
+                      </>
+                    ) : (
+                      <>
+                        <Archive className="inline" />
+                        Archive
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Trash2 className="inline" /> Delete Task
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-          <Button
-            variant={"outline"}
-            size={"sm"}
-            className="w-fit"
-            onClick={handleArchiveTask}
-            disabled={isArchiving}
-          >
-            {task.isArchived ? (
-              <>
-                <ArchiveRestore className="inline" />
-                Unarchive
-              </>
-            ) : (
-              <>
-                <Archive className="inline" />
-                Archive
-              </>
-            )}
-          </Button>
+          <div className="hidden md:flex items-center gap-2">
+            <Button
+              variant={"outline"}
+              size={"sm"}
+              className=" w-fit"
+              onClick={handleWatchTask}
+              disabled={isWatching || task.isArchived}
+            >
+              {isUserWatching ? (
+                <>
+                  <EyeOff className="inline size-4" />
+                  <span>Stop Watching</span>
+                </>
+              ) : (
+                <>
+                  <Eye className="inline size-4" />
+                  <span>Watch</span>
+                </>
+              )}
+            </Button>
+
+            <Button
+              variant={"outline"}
+              size={"sm"}
+              className="w-fit"
+              onClick={handleArchiveTask}
+              disabled={isArchiving || task.isArchived}
+            >
+              {task.isArchived ? (
+                <>
+                  <ArchiveRestore className="inline" />
+                  Unarchive
+                </>
+              ) : (
+                <>
+                  <Archive className="inline" />
+                  Archive
+                </>
+              )}
+            </Button>
+
+            <Button
+              variant={"destructive"}
+              size={"sm"}
+              onClick={() => {}}
+              className="hidden md:block"
+              disabled={task.isArchived}
+            >
+              Delete Task
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-7 gap-6">
-        <div className="lg:col-span-5">
-          <div className="bg-card rounded-lg p-6 shadow-sm mb-6">
-            <div className="flex flex-col md:flex-row justify-between items-start mb-4">
-              <div>
+      <div className="grid grid-cols-1 md:grid-cols-7 gap-6 mt-3">
+        <div className="lg:col-span-5 ">
+          <div className="bg-card rounded-lg p-2 mb-6">
+            <div className=" mb-4">
+              <div className="flex items-center gap-3">
                 <Badge
                   variant={
                     task.priority === "High"
@@ -172,31 +239,35 @@ const TaskDetails = () => {
                         ? "default"
                         : "outline"
                   }
-                  className="mb-2 capitalize"
+                  className="capitalize"
                 >
                   {task.priority} Priority
                 </Badge>
-                <TaskTitle title={task.title} taskId={task._id} />
-
-                <div className="text-xs lg:text-sm text-muted-foreground mt-3">
-                  Created at:{" "}
+                <p className="text-xs lg:text-sm text-muted-foreground">
+                  Created:{" "}
                   {formatDistanceToNow(new Date(task.createdAt), {
                     addSuffix: true,
                   })}
-                </div>
+                </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 mt-4 md:mt-0">
-                <TaskStatusSelector status={task.status} taskId={task._id} />
+              <TaskTitle
+                title={task.title}
+                taskId={task._id}
+                isArchived={task.isArchived}
+              />
 
-                <Button
-                  variant={"destructive"}
-                  size={"sm"}
-                  onClick={() => {}}
-                  className="hidden md:block"
-                >
-                  Delete Task
-                </Button>
+              <div className="flex items-center gap-3 mt-4">
+                <TaskStatusSelector
+                  status={task.status}
+                  taskId={task._id}
+                  isArchived={task.isArchived}
+                />
+                <TaskPrioritySelector
+                  priority={task.priority}
+                  taskId={taskId}
+                  isArchived={task.isArchived}
+                />
               </div>
             </div>
 
@@ -207,6 +278,7 @@ const TaskDetails = () => {
               <TaskDescription
                 description={task.description || ""}
                 taskId={taskId}
+                isArchived={task.isArchived}
               />
             </div>
 
@@ -216,11 +288,14 @@ const TaskDetails = () => {
               projectMembers={
                 project.members as { user: User; role: ProjectMemberRole }[]
               }
+              isArchived={task.isArchived}
             />
 
-            <TaskPrioritySelector priority={task.priority} taskId={taskId} />
-
-            <SubTasksDetails subtasks={task.subtasks || []} taskId={taskId} />
+            <SubTasksDetails
+              subtasks={task.subtasks || []}
+              taskId={taskId}
+              isArchived={task.isArchived}
+            />
           </div>
 
           <CommentSection taskId={task._id} members={project.members as any} />

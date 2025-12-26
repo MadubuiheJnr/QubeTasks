@@ -8,9 +8,11 @@ import { Textarea } from "../ui/textarea";
 export const TaskDescription = ({
   description,
   taskId,
+  isArchived,
 }: {
   description: string;
   taskId: string;
+  isArchived: boolean;
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [newDescription, setNewDescription] = useState<string>(description);
@@ -76,6 +78,7 @@ export const TaskDescription = ({
           variant={"outline"}
           size={"sm"}
           onClick={() => setIsEditing(true)}
+          disabled={isArchived}
         >
           <Edit className="size-3 inline text-muted-foreground" />
         </Button>

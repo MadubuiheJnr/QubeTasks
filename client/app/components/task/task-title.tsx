@@ -8,9 +8,11 @@ import { toast } from "sonner";
 export const TaskTitle = ({
   title,
   taskId,
+  isArchived,
 }: {
   title: string;
   taskId: string;
+  isArchived: boolean;
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [newTitle, setNewTitle] = useState<string>(title);
@@ -35,16 +37,16 @@ export const TaskTitle = ({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-5">
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-2">
       {isEditing ? (
         <Input
-          className="text-lg! font-semibold w-full lg:w-125"
+          className="text-base! md:text-lg! font-semibold w-full lg:w-125"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           disabled={isPending}
         />
       ) : (
-        <h2 className="text-lg font-semibold">{title}</h2>
+        <h2 className="text-base md:text-lg font-semibold">{title}</h2>
       )}
 
       {isEditing ? (
@@ -74,6 +76,7 @@ export const TaskTitle = ({
           variant={"outline"}
           size={"sm"}
           onClick={() => setIsEditing(true)}
+          disabled={isArchived}
         >
           <Edit className="size-3 inline text-muted-foreground" />
         </Button>

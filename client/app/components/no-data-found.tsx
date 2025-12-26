@@ -8,6 +8,7 @@ interface NoDataFoundProps {
   btnText?: string;
   btnAction?: () => void;
   className?: string;
+  [key: string]: any;
 }
 
 export const NoDataFound = ({
@@ -16,6 +17,7 @@ export const NoDataFound = ({
   btnText,
   btnAction,
   className,
+  ...props
 }: NoDataFoundProps) => {
   return (
     <div
@@ -30,7 +32,7 @@ export const NoDataFound = ({
         {description}
       </p>
       {btnText && (
-        <Button onClick={btnAction} className="mt-4">
+        <Button onClick={btnAction} className={cn("mt-4")} {...props}>
           <CirclePlus className="size-4" />
           {btnText}
         </Button>

@@ -37,7 +37,7 @@ const getData = async <T>(endpoint: string): Promise<T> => {
   return response.data;
 };
 
-const updateData = async <T>(endpoint: string, data: unknown): Promise<T> => {
+const updateData = async <T>(endpoint: string, data?: unknown): Promise<T> => {
   const response = await api.put(endpoint, data);
   return response.data;
 };

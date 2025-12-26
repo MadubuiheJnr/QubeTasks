@@ -1,11 +1,13 @@
 import Loader from "@/components/loader";
 import { NoDataFound } from "@/components/no-data-found";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArchiveProjects } from "@/components/workspace-archive/archived-projects";
 import { ArchivedTasks } from "@/components/workspace-archive/archived-tasks";
 import { useGetWorkspaceArchive } from "@/hooks/use-workspace";
 import type { Project, Task } from "@/types";
+import { Search, Settings2 } from "lucide-react";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
 
@@ -39,7 +41,7 @@ const WorkspaceArchive = () => {
 
   return (
     <div className="py-6 space-y-5">
-      <div>
+      <div className="w-full md:max-w-2xl">
         <p className="text-xl font-semibold text-primary">Archive</p>
         <p className="text-sm text-muted-foreground font-medium">
           Access all archived projects and tasks within this workspace. Archived
@@ -47,11 +49,43 @@ const WorkspaceArchive = () => {
         </p>
       </div>
 
-      {!isTaskArchive ? (
-        <Input placeholder="Search archived projects" />
-      ) : (
-        <Input placeholder="Search archived tasks" />
-      )}
+      <div className="transition-transform ease-in-out duration-300">
+        {!isTaskArchive ? (
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 border border-border rounded-full px-2 py-2 w-full md:max-w-md">
+              <Search className="size-5 text-muted-foreground" />
+              <input
+                placeholder="Search archived projects"
+                className="w-full outline-none text-sm"
+              />
+            </div>
+            <Button
+              variant={"outline"}
+              size={"icon"}
+              className="text-primary cursor-pointer shadow-none rounded-full"
+            >
+              <Settings2 className="size-5 text-muted-foreground" />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 border border-border rounded-full px-2 py-2 w-full md:max-w-md">
+              <Search className="size-5 text-muted-foreground" />
+              <input
+                placeholder="Search archived tasks"
+                className="w-full outline-none text-sm"
+              />
+            </div>
+            <Button
+              variant={"outline"}
+              size={"icon"}
+              className="text-primary cursor-pointer shadow-none rounded-full"
+            >
+              <Settings2 className="size-5 text-muted-foreground" />
+            </Button>
+          </div>
+        )}
+      </div>
 
       <Tabs defaultValue="projects" className="mt-5">
         <TabsList>
@@ -63,18 +97,45 @@ const WorkspaceArchive = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="projects">
-          {data.archivedProjects.map((project) => (
-            <ArchiveProjects key={project._id} project={project} />
-          ))}
+        <TabsContent
+          value="projects"
+          className="grid grid-cols-1 gap-3 py-3 md:grid-cols-2 lg:grid-cols-3"
+        >
+          {data.archivedProjects.length > 0 ? (
+            data.archivedProjects.map((project) => (
+              <ArchiveProjects
+                key={project._id}
+                project={project}
+                workspaceId={workspaceId}
+              />
+            ))
+          ) : (
+            <NoDataFound
+              title="No Archived Projects"
+              description="There are no archived projects in this workspace."
+              className="mt-6"
+            />
+          )}
         </TabsContent>
         <TabsContent
           value="tasks"
           className="grid grid-cols-1 gap-3 py-3 md:grid-cols-2 lg:grid-cols-3"
         >
-          {data.archivedTasks.map((task) => (
-            <ArchivedTasks key={task._id} task={task} />
-          ))}
+          {data.archivedTasks.length > 0 ? (
+            data.archivedTasks.map((task) => (
+              <ArchivedTasks
+                key={task._id}
+                task={task}
+                workspaceId={workspaceId}
+              />
+            ))
+          ) : (
+            <NoDataFound
+              title="No Archived Tasks"
+              description="There are no archived tasks in this workspace."
+              className="mt-6"
+            />
+          )}
         </TabsContent>
       </Tabs>
     </div>

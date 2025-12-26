@@ -11,10 +11,12 @@ export const TaskAssigneesSelector = ({
   task,
   assignees,
   projectMembers,
+  isArchived,
 }: {
   task: Task;
   assignees: User[];
   projectMembers: { user: User; role: ProjectMemberRole }[];
+  isArchived: boolean;
 }) => {
   const [selectedIds, setSelectedIds] = useState<string[]>(
     assignees.map((assignee) => assignee._id)
@@ -102,6 +104,7 @@ export const TaskAssigneesSelector = ({
           variant={"outline"}
           size={"sm"}
           className="gap-x-5"
+          disabled={isArchived}
         >
           {selectedIds.length === 0
             ? "Select Assignees"
@@ -110,7 +113,9 @@ export const TaskAssigneesSelector = ({
         </Button>
 
         {dropDownOpen && (
-          <div className="absolute z-10 mt-1 w-full bg-primary-foreground border rounded shadow-lg max-h-60 overflow-y-auto pb-3">
+          <div
+            className={`absolute z-10 mt-1 w-full bg-primary-foreground border rounded shadow-lg max-h-60 overflow-y-auto pb-3 ${isArchived ? "cursor-none opacity-90" : ""}`}
+          >
             <div className="flex justify-between px-2 py-1 border-b">
               <Button
                 variant={"ghost"}

@@ -567,7 +567,8 @@ const getWorkspaceArchive = async (req, res) => {
     const [totalArchivedTasks, archivedTasks] = await Promise.all([
       TaskModel.countDocuments({ workspace: workspaceId, isArchived: true }),
       TaskModel.find({ workspace: workspaceId, isArchived: true })
-        .populate("project", "title")
+        .populate("project", "title _id")
+        .populate("assignees", "name profilePicture")
         .sort({ createdAt: -1 }),
     ]);
 

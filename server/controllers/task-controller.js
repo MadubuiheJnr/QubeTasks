@@ -643,7 +643,7 @@ const archivedTask = async (req, res) => {
       });
     }
 
-    const isMember = project.members.some(
+    const isMember = project.members.find(
       (member) => member.user.toString() === req.user._id.toString()
     );
 
@@ -652,6 +652,14 @@ const archivedTask = async (req, res) => {
         message: "You are not a member of this project",
       });
     }
+
+    // const allowedRoles = ["manager"];
+    // if (!allowedRoles.includes(isMember.role)) {
+    //   return res.status(403).json({
+    //     message: "Only project managers can archive tasks",
+    //   });
+    // }
+
     const isAchieved = task.isArchived;
 
     task.isArchived = !isAchieved;

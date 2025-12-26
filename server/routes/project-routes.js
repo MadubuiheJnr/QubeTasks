@@ -3,6 +3,7 @@ import { validateRequest } from "zod-express-middleware";
 import authMiddleware from "../middleware/auth-middleware.js";
 import { projectSchema } from "../libs/validate-schema.js";
 import {
+  archiveProject,
   createProject,
   getProjectDetails,
   getProjectTasks,
@@ -21,6 +22,17 @@ router.post(
     body: projectSchema,
   }),
   createProject
+);
+
+router.put(
+  "/:projectId/archive",
+  authMiddleware,
+  validateRequest({
+    params: z.object({
+      projectId: z.string(),
+    }),
+  }),
+  archiveProject
 );
 
 router.get(

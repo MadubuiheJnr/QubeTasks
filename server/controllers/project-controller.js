@@ -1,6 +1,7 @@
 import ProjectModel from "../models/project-model.js";
 import TaskModel from "../models/task-model.js";
 import WorkspaceModel from "../models/workspace-model.js";
+import recordActivity from "../libs/record-activity.js";
 
 const createProject = async (req, res) => {
   try {
@@ -126,4 +127,71 @@ const getProjectTasks = async (req, res) => {
   }
 };
 
-export { createProject, getProjectDetails, getProjectTasks };
+const archiveProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const project = await ProjectModel.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
+    }
+
+    const Workspace = await WorkspaceModel.findById(project.workspace);
+
+    if (!Workspace) {
+      return res.status(404).json({
+        message: "Workspace not found",
+      });
+    }
+
+    const isMember = project.members.find(
+      (member) => member.user.toString() === req.user._id.toString()
+    );
+
+    if (!isMember) {
+      return res.status(403).json({
+        message: "You are not a member of this project",
+      });
+    }
+
+    const allowedRoles = ["manager"];
+    if (!allowedRoles.includes(isMember.role)) {
+      return res.status(403).json({
+        message: "Only project managers can archive projects",
+      });
+    }
+
+    const isArchived = project.isArchived;
+
+    project.isArchived = !isArchived;
+    await project.save();
+
+    // record activity
+    await recordActivity(
+      req.user._id,
+      "updated_project",
+      "Project",
+      projectId,
+      {
+        description: `${
+          isArchived
+            ? "removed project from archived:"
+            : "added project to archived:"
+        }  ${project.title}`,
+      }
+    );
+
+    res.status(200).json(project);
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+export { createProject, getProjectDetails, getProjectTasks, archiveProject };

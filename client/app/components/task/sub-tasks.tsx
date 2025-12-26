@@ -16,9 +16,11 @@ import { Plus } from "lucide-react";
 export const SubTasksDetails = ({
   subtasks,
   taskId,
+  isArchived,
 }: {
   subtasks: Subtask[];
   taskId: string;
+  isArchived: boolean;
 }) => {
   const [newSubTask, setNewSubTask] = useState("");
   const [isAdding, setIsAdding] = useState(false);
@@ -106,6 +108,7 @@ export const SubTasksDetails = ({
                 description="Create a task to get started"
                 btnText="New Task"
                 btnAction={() => setIsAdding(true)}
+                disabled={isArchived}
               />
             )}
       </div>

@@ -207,6 +207,12 @@ export const useArchivedTaskMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ["task-activity", data._id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["project", data.project],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["workspace", data.workspace, "archive"],
+      });
     },
   });
 };
